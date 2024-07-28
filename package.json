@@ -1,0 +1,31 @@
+{
+  "name": "auth-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tspc",
+    "dev": "nodemon src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/env": "^4.3.0",
+    "@prisma/client": "^5.12.1",
+    "bcrypt": "^5.1.1",
+    "fastify": "^4.26.2",
+    "prisma": "^5.12.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.12.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.1.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.4.5",
+    "typescript-transform-paths": "^3.4.7"
+  }
+}
