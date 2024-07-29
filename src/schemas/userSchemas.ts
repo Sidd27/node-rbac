@@ -10,6 +10,45 @@ export const createUserSchema = {
   },
 };
 
+export const getUserByIdSchema = {
+  params: {
+    type: "object",
+    properties: {
+      id: { type: "string" },
+    },
+    required: ["id"],
+  },
+  response: {
+    200: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        username: { type: "string" },
+        email: { type: "string", nullable: true },
+        roleIDs: {
+          type: "array",
+          items: { type: "string" },
+        },
+      },
+      required: ["id", "username", "roleIDs"],
+    },
+    404: {
+      type: "object",
+      properties: {
+        error: { type: "string" },
+      },
+      required: ["error"],
+    },
+    500: {
+      type: "object",
+      properties: {
+        error: { type: "string" },
+      },
+      required: ["error"],
+    },
+  },
+};
+
 export const deleteUserSchema = {
   params: {
     type: "object",

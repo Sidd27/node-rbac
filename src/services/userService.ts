@@ -23,6 +23,7 @@ export async function registerUser(
 export async function getUserById(userId: string): Promise<User | null> {
   return prisma.user.findUnique({
     where: { id: userId },
+    include: { roles: true },
   });
 }
 

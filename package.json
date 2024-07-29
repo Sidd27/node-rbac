@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "tspc",
+    "prepare": "",
     "dev": "nodemon src/index.ts",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "postinstall": "pnpx prisma db push"
   },
   "keywords": [],
   "author": "",

@@ -79,7 +79,8 @@ export async function assignRolesToUserController(
     const { userId } = request.params;
     const { roleIds } = request.body;
     const user = await assignRolesToUser(userId, roleIds);
-    reply.send(user);
+    const { password: _, ...userWithoutPassword } = user;
+    reply.send(userWithoutPassword);
   } catch (error) {
     console.error("Error assigning roles to user:", error);
     reply.code(500).send({ error: "Internal server error" });
@@ -93,7 +94,8 @@ export async function removeRolesFromUserController(
   try {
     const { userId, roleIds } = request.params;
     const user = await removeRolesFromUser(userId, roleIds);
-    reply.send(user);
+    const { password: _, ...userWithoutPassword } = user;
+    reply.send(userWithoutPassword);
   } catch (error) {
     console.error("Error removing role from user:", error);
     reply.code(500).send({ error: "Internal server error" });

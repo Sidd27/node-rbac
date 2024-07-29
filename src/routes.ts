@@ -16,12 +16,14 @@ import {
   assignRolesToUserController,
   createUserController,
   deleteUserController,
+  getUserByIdController,
   removeRolesFromUserController,
 } from "@/controllers/userController";
 import {
   assignRolesToUserSchema,
   createUserSchema,
   deleteUserSchema,
+  getUserByIdSchema,
   removeRolesFromUserSchema,
 } from "./schemas/userSchemas";
 import {
@@ -44,7 +46,10 @@ export default async function routes(fastify: FastifyInstance) {
     schema: createUserSchema,
     handler: createUserController,
   });
-
+  fastify.get("/users/:id", {
+    schema: getUserByIdSchema,
+    handler: getUserByIdController,
+  });
   fastify.delete("/users/:id", {
     schema: deleteUserSchema,
     handler: deleteUserController,
@@ -57,10 +62,6 @@ export default async function routes(fastify: FastifyInstance) {
     schema: removeRolesFromUserSchema,
     handler: removeRolesFromUserController,
   });
-
-  fastify.post("/users", createUserController);
-  fastify.post("/roles", createRoleController);
-  fastify.patch("/roles/:roleId/attributes", attachAttributesToRoleController);
 
   // Role routes
   fastify.post("/roles", {
