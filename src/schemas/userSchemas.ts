@@ -3,10 +3,8 @@ export const createUserSchema = {
     type: "object",
     properties: {
       username: { type: "string" },
-      password: { type: "string" },
-      email: { type: "string" },
     },
-    required: ["username", "password"],
+    required: ["username"],
   },
 };
 
@@ -24,7 +22,6 @@ export const getUserByIdSchema = {
       properties: {
         id: { type: "string" },
         username: { type: "string" },
-        email: { type: "string", nullable: true },
         roleIDs: {
           type: "array",
           items: { type: "string" },
@@ -90,5 +87,36 @@ export const removeRolesFromUserSchema = {
       roleIds: { type: "array", items: { type: "string" } },
     },
     required: ["roleIds"],
+  },
+};
+
+export const validateUserAccessByNameSchema = {
+  params: {
+    type: "object",
+    required: ["userId", "attributeName"],
+    properties: {
+      userId: { type: "string" },
+      attributeName: { type: "string" },
+    },
+  },
+  response: {
+    200: {
+      type: "object",
+      properties: {
+        hasAccess: { type: "boolean" },
+      },
+    },
+    401: {
+      type: "object",
+      properties: {
+        error: { type: "string" },
+      },
+    },
+    500: {
+      type: "object",
+      properties: {
+        error: { type: "string" },
+      },
+    },
   },
 };

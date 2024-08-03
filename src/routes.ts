@@ -18,6 +18,7 @@ import {
   deleteUserController,
   getUserByIdController,
   removeRolesFromUserController,
+  validateUserAccessByNameController,
 } from "@/controllers/userController";
 import {
   assignRolesToUserSchema,
@@ -25,6 +26,7 @@ import {
   deleteUserSchema,
   getUserByIdSchema,
   removeRolesFromUserSchema,
+  validateUserAccessByNameSchema,
 } from "./schemas/userSchemas";
 import {
   createAttributeSchema,
@@ -62,6 +64,12 @@ export default async function routes(fastify: FastifyInstance) {
     schema: removeRolesFromUserSchema,
     handler: removeRolesFromUserController,
   });
+
+  fastify.get(
+    "/users/:userId/attributes/:attributeName/access",
+    { schema: validateUserAccessByNameSchema },
+    validateUserAccessByNameController
+  );
 
   // Role routes
   fastify.post("/roles", {

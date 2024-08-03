@@ -2,15 +2,11 @@ import prisma from "@/prismaClient";
 import { User } from "@prisma/client";
 
 // Function to register a new user
-export async function registerUser(
-  username: string,
-  hashedPassword: string
-): Promise<User> {
+export async function registerUser(username: string): Promise<User> {
   try {
     return await prisma.user.create({
       data: {
         username,
-        password: hashedPassword,
       },
     });
   } catch (error) {
@@ -76,4 +72,43 @@ export async function removeRolesFromUser(
     where: { id: userId },
     data: { roleIDs: updatedRoleIDs },
   });
+}
+
+export async function validateUserAccessByName(
+  userId: string,
+  attributeName: string
+): Promise<boolean> {
+  // Find the user and include their roles and attributes
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      roles: {
+        include: {
+          attributes: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new Error(`User with id ${userId} not found`);
+  }
+
+  // Find the attribute by name
+  const attribute = await prisma.attribute.findUnique({
+    where: { name: attributeName },
+  });
+
+  if (!attribute) {
+    throw new Error(`Attribute with name ${attributeName} not found`);
+  }
+
+  // Check if any of the user's roles have the given attribute
+  for (const role of user.roles) {
+    if (role.attributeIDs.includes(attribute.id)) {
+      return true;
+    }
+  }
+
+  return false;
 }

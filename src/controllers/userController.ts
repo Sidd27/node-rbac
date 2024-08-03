@@ -4,13 +4,12 @@ import {
   getUserById,
   registerUser,
   removeRolesFromUser,
+  validateUserAccessByName,
 } from "@/services/userService";
-import { hashPassword } from "@/utils/password";
 import { FastifyRequest, FastifyReply } from "fastify";
 
 interface RegisterRequestBody {
   username: string;
-  password: string;
 }
 
 export async function createUserController(
@@ -18,18 +17,12 @@ export async function createUserController(
   reply: FastifyReply
 ): Promise<void> {
   try {
-    const { username, password }: RegisterRequestBody =
+    const { username }: RegisterRequestBody =
       request.body as RegisterRequestBody;
 
-    // Hash the password before saving it to the database
-    const hashedPassword = await hashPassword(password, 10);
+    const newUser = await registerUser(username);
 
-    // Register the user with the hashed password
-    const newUser = await registerUser(username, hashedPassword);
-    // Omit the password property from the newUser object
-    const { password: _, ...userWithoutPassword } = newUser;
-
-    reply.code(201).send(userWithoutPassword);
+    reply.code(201).send(newUser);
   } catch (error) {
     console.error("Error registering user:", error);
     reply.code(500).send({ error: "Internal server error" });
@@ -79,8 +72,7 @@ export async function assignRolesToUserController(
     const { userId } = request.params;
     const { roleIds } = request.body;
     const user = await assignRolesToUser(userId, roleIds);
-    const { password: _, ...userWithoutPassword } = user;
-    reply.send(userWithoutPassword);
+    reply.send(user);
   } catch (error) {
     console.error("Error assigning roles to user:", error);
     reply.code(500).send({ error: "Internal server error" });
@@ -94,10 +86,30 @@ export async function removeRolesFromUserController(
   try {
     const { userId, roleIds } = request.params;
     const user = await removeRolesFromUser(userId, roleIds);
-    const { password: _, ...userWithoutPassword } = user;
-    reply.send(userWithoutPassword);
+    reply.send(user);
   } catch (error) {
     console.error("Error removing role from user:", error);
+    reply.code(500).send({ error: "Internal server error" });
+  }
+}
+
+export async function validateUserAccessByNameController(
+  request: FastifyRequest<{
+    Params: { userId: string; attributeName: string };
+  }>,
+  reply: FastifyReply
+) {
+  try {
+    const { userId, attributeName } = request.params;
+    const hasAccess = await validateUserAccessByName(userId, attributeName);
+
+    if (hasAccess) {
+      reply.send({ hasAccess });
+    } else {
+      reply.code(401).send({ error: "Unauthorized access" });
+    }
+  } catch (error) {
+    console.error("Error validating user access:", error);
     reply.code(500).send({ error: "Internal server error" });
   }
 }
